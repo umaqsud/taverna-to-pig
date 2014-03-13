@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="0.6.1" timestamp="20.01.14 13:11">
+  <identification status="CONFLICT">
+    <identity format="TIFF EXIF" mimetype="image/tiff" toolname="FITS" toolversion="0.6.1">
+      <tool toolname="Jhove" toolversion="1.5" />
+      <version toolname="Jhove" toolversion="1.5">6.0</version>
+    </identity>
+    <identity format="Tagged Image File Format" mimetype="image/tiff" toolname="FITS" toolversion="0.6.1">
+      <tool toolname="file utility" toolversion="5.11" />
+      <tool toolname="Exiftool" toolversion="7.74" />
+      <tool toolname="Droid" toolversion="3.0" />
+      <tool toolname="NLNZ Metadata Extractor" toolversion="3.4GA" />
+      <tool toolname="ffident" toolversion="0.2" />
+      <version toolname="Droid" toolversion="3.0" status="CONFLICT">3</version>
+      <version toolname="Droid" toolversion="3.0" status="CONFLICT">4</version>
+      <version toolname="Droid" toolversion="3.0" status="CONFLICT">5</version>
+      <version toolname="Droid" toolversion="3.0" status="CONFLICT">6</version>
+      <externalIdentifier toolname="Droid" toolversion="3.0" type="puid">fmt/7</externalIdentifier>
+      <externalIdentifier toolname="Droid" toolversion="3.0" type="puid">fmt/8</externalIdentifier>
+      <externalIdentifier toolname="Droid" toolversion="3.0" type="puid">fmt/9</externalIdentifier>
+      <externalIdentifier toolname="Droid" toolversion="3.0" type="puid">fmt/10</externalIdentifier>
+    </identity>
+  </identification>
+  <fileinfo>
+    <size toolname="Jhove" toolversion="1.5">73112</size>
+    <creatingApplicationName toolname="Jhove" toolversion="1.5">Adobe Photoshop CS3 Macintosh</creatingApplicationName>
+    <lastmodified toolname="Exiftool" toolversion="7.74" status="SINGLE_RESULT">2013:12:12 11:26:28+01:00</lastmodified>
+    <created toolname="Exiftool" toolversion="7.74" status="SINGLE_RESULT">2008:09:09 09:56:46+02:00</created>
+    <filepath toolname="OIS File Information" toolversion="0.1" status="SINGLE_RESULT">/home/umar/Downloads/Jabhook.tv.tif</filepath>
+    <filename toolname="OIS File Information" toolversion="0.1" status="SINGLE_RESULT">Jabhook.tv.tif</filename>
+    <md5checksum toolname="OIS File Information" toolversion="0.1" status="SINGLE_RESULT">4eccb3ffe11b99cb12352b6192f71154</md5checksum>
+    <fslastmodified toolname="OIS File Information" toolversion="0.1" status="SINGLE_RESULT">1386843988000</fslastmodified>
+  </fileinfo>
+  <filestatus>
+    <well-formed toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">true</well-formed>
+    <valid toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">true</valid>
+  </filestatus>
+  <metadata>
+    <image>
+      <byteOrder toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">little endian</byteOrder>
+      <compressionScheme toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">LZW</compressionScheme>
+      <imageWidth toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">1024</imageWidth>
+      <imageHeight toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">768</imageHeight>
+      <colorSpace toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">RGB</colorSpace>
+      <referenceBlackWhite toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">0.0 255.0 0.0 255.0 0.0 255.0</referenceBlackWhite>
+      <orientation toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">normal*</orientation>
+      <samplingFrequencyUnit toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">in.</samplingFrequencyUnit>
+      <xSamplingFrequency toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">72</xSamplingFrequency>
+      <ySamplingFrequency toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">72</ySamplingFrequency>
+      <bitsPerSample toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">8 8 8</bitsPerSample>
+      <samplesPerPixel toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">3</samplesPerPixel>
+      <scanningSoftwareName toolname="Jhove" toolversion="1.5" status="SINGLE_RESULT">Adobe Photoshop CS3 Macintosh</scanningSoftwareName>
+    </image>
+  </metadata>
+</fits>
+

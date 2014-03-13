@@ -1,0 +1,3 @@
+src/test/resources/pig/input/images/19191227b.tif
+src/test/resources/pig/input/images/Adoniram_Judson_Gordon.tif
+src/test/resources/pig/input/images/Jabhook.tv.tif

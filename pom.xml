@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>edu.tuberlin.dima</groupId>
+	<artifactId>taverna-to-pig</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<name>Taverna to Apache Pig</name>
+
+	<description>Example project for transforming taverna workflows to pig scripts</description>
+
+	<properties>
+		<pig.version>0.10.0</pig.version>
+		<scufl2.version>0.13.1</scufl2.version>
+		<outputFile.name>${project.artifactId}-${project.version}-withDependencies.jar</outputFile.name>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>my-local-repo</id>
+			<url>file://${basedir}/my-repo</url>
+			<!-- mvn install:install-file -Dfile=pigunit.jar -DgroupId=org.apache.pig 
+				-DartifactId=pigunit -Dversion=0.10.0 -Dpackaging=jar -DlocalRepositoryPath=./my-repo/ -->
+		</repository>
+		<repository>
+			<id>scufl-repo</id>
+			<url>http://build.mygrid.org.uk/maven/repository/</url>
+		</repository>
+
+	</repositories>
+
+	<dependencies>
+
+		<!-- Taverna Dependencies -->
+
+		<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-api</artifactId>
+			<version>${scufl2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-t2flow</artifactId>
+			<version>${scufl2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-rdfxml</artifactId>
+			<version>${scufl2.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.pig</groupId>
+			<artifactId>pig</artifactId>
+			<version>${pig.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.pig</groupId>
+			<artifactId>pigunit</artifactId>
+			<version>${pig.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>14.0.1</version>
+		</dependency>
+
+		<!-- String Template -->
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>stringtemplate</artifactId>
+			<version>4.0.2</version>
+		</dependency>
+
+		<!-- Maven Dependencies -->
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-model</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-model</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- <argLine>-Xmx1024m</argLine> -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>
+								${project.build.directory}/${outputFile.name}
+							</outputFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

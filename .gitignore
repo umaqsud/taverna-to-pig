@@ -4,3 +4,18 @@
 *.jar
 *.war
 *.ear
+
+# Eclipse #
+
+.classpath
+.project
+.settings
+
+# maven  #
+
+target/
+
+# mac #
+
+.DS_Store
+.DS_Store?

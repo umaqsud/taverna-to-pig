@@ -4,7 +4,7 @@ Compiling Taverna Workflows to Apache Pig Programs
 
 ## Introduction
 
-Taverna is an open source and domain-independent Workflow Management System – a suite of tools used to design and execute scientific workflows and aid in silico experimentation. In order to be able to easily scale workflows created with Taverna, this compiler automatically generates a pig script file that can be executed on a Hadoop Cluster.
+Taverna is an open source and domain-independent Workflow Management System - a suite of tools used to design and execute scientific workflows and aid in silico experimentation. In order to be able to easily scale workflows created with Taverna, this compiler automatically generates a pig script file that can be executed on a Hadoop Cluster.
 
 For more information see https://pig.apache.org/ or http://www.taverna.org.uk/
 
@@ -13,8 +13,9 @@ For more information see https://pig.apache.org/ or http://www.taverna.org.uk/
 This will compile the taverna workflow and generate the pig script and configuration files in the output path.
 
 ```
-java -cp target/taverna-to-pig-1.0-SNAPSHOT.jar edu.tuberlin.dima.taverna_to_pig.main.TavernaToPigMain \
--i path_to_taverna_workflow -o path_to_output
+java -cp target/taverna-to-pig-1.0-SNAPSHOT.jar \ 
+  edu.tuberlin.dima.taverna_to_pig.main.TavernaToPigMain \
+  -i path_to_taverna_workflow -o path_to_output
 ```
 
 To run the pig script in local mode, go inside the `path_to_output` use the predefined shell script.
@@ -40,8 +41,9 @@ sudo chmod +x run.sh
 ### Run the Example
 
 ```
-java -cp target/taverna-to-pig-1.0-SNAPSHOT-withDependencies.jar edu.tuberlin.dima.taverna_to_pig.main.TavernaToPigMain \
--i src/test/resources/scufl/workflows/scape_ffff/FFFF-Workflows-simple.t2flow -o output
+java -cp target/taverna-to-pig-1.0-SNAPSHOT-withDependencies.jar \ 
+  edu.tuberlin.dima.taverna_to_pig.main.TavernaToPigMain \
+  -i src/test/resources/scufl/workflows/scape_ffff/FFFF-Workflows-simple.t2flow -o output
 ```
 
 Or in Eclipse, open the Run Configurations

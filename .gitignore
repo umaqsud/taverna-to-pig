@@ -15,6 +15,10 @@
 
 target/
 
+# github  # 
+
+.README.md.html
+
 # mac #
 
 .DS_Store

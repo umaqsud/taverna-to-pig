@@ -169,7 +169,6 @@ public class TavernaToPigConverter {
 
 			// tool
 			if (type.equals(TOOL_URI)) {
-				System.out.println("Found activity of type 'TOOL'.");
 
 				String streamName = processor.getName() + "_stream";
 
@@ -199,7 +198,6 @@ public class TavernaToPigConverter {
 				pythonStreams.put(streamName, stPythonStream.render());
 
 			} else if (type.equals(XPATH_URI)) {
-				System.out.println("Found Activity of type 'XPATH'.");
 
 				String xpathExpName = processor.getName() + "_xpath_exp";
 				String xpathExp = TavernaToPigConverterUtil

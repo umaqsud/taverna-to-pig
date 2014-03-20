@@ -2,7 +2,9 @@ package edu.tuberlin.dima.taverna_to_pig;
 
 import org.apache.pig.pigunit.PigTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.io.Resources;
@@ -20,7 +22,8 @@ public class ScapePigTest extends PigUnitTest {
 		System.out.println(tmpDir.getRoot().getAbsolutePath());
 	}
 
-	// @Test
+	@Test
+	@Ignore
 	public void testScapeToolSample() throws Exception {
 
 		String pigFile = Resources.getResource(

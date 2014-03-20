@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -59,36 +58,7 @@ public class TavernaToPigConverterTest extends PigUnitTest {
 
 		assertEquals("STORE XPathJhove2 INTO '$out';", pigLines.get(3));
 
-		// pig script
-
-		System.out.println();
-		System.out.println("-- Pig lines: ");
-
-		for (String pigScriptLine : pigLines) {
-			System.out.println(pigScriptLine);
-		}
-
-		List<String> pigHeaderLines = pigScript.getPigHeaderLines();
-
-		System.out.println();
-		System.out.println("-- Pig Header lines: ");
-
-		for (String pigScriptLine : pigHeaderLines) {
-			System.out.println(pigScriptLine);
-		}
-
-		System.out.println();
-		System.out.println("-- Pigscript python streams");
-
-		for (Entry<String, String> entry : pigScript.getPythonStreams()
-				.entrySet()) {
-			System.out.println(entry.getKey());
-			System.out.println(entry.getValue());
-		}
-
-		// exporter
-
-		PigScriptExporter.export(pigScript, tmpDir.getRoot());
+		// PigScriptExporter.export(pigScript, tmpDir.getRoot());
 
 	}
 
@@ -119,35 +89,8 @@ public class TavernaToPigConverterTest extends PigUnitTest {
 		expectedPigLines
 				.add("testTool = STREAM inputList1 THROUGH testTool_stream AS (stream_stdout: chararray);");
 		expectedPigLines.add("STORE testTool INTO '$out';");
-		
+
 		assertEquals(expectedPigLines, pigLines);
-		
-		// pig script
-
-		System.out.println();
-		System.out.println("-- Pig lines: ");
-
-		for (String pigScriptLine : pigLines) {
-			System.out.println(pigScriptLine);
-		}
-
-		List<String> pigHeaderLines = pigScript.getPigHeaderLines();
-
-		System.out.println();
-		System.out.println("-- Pig Header lines: ");
-
-		for (String pigScriptLine : pigHeaderLines) {
-			System.out.println(pigScriptLine);
-		}
-
-		System.out.println();
-		System.out.println("-- Pigscript python streams");
-
-		for (Entry<String, String> entry : pigScript.getPythonStreams()
-				.entrySet()) {
-			System.out.println(entry.getKey());
-			System.out.println(entry.getValue());
-		}
 
 	}
 }

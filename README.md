@@ -13,7 +13,7 @@ For more information see https://pig.apache.org/ or http://www.taverna.org.uk/
 This will compile the taverna workflow and generate the pig script and configuration files in the output path.
 
 ```
-java -cp target/taverna-to-pig-1.0-SNAPSHOT.jar \ 
+java -cp target/taverna-to-pig-1.0-SNAPSHOT-withDependencies.jar \ 
   edu.tuberlin.dima.taverna_to_pig.main.TavernaToPigMain \
   -i path_to_taverna_workflow -o path_to_output
 ```

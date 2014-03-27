@@ -42,7 +42,7 @@ public class TavernaToPigConverterTest extends PigUnitTest {
 
 		List<String> pigLines = pigScript.getPigLines();
 
-		assertEquals(4, pigLines.size());
+		assertEquals(5, pigLines.size());
 
 		assertEquals(
 				"imagePathes = LOAD '$imagePathes' USING PigStorage() AS (val: chararray);",
@@ -56,7 +56,11 @@ public class TavernaToPigConverterTest extends PigUnitTest {
 				"XPathJhove2 = FOREACH fitsValidation GENERATE XPathService('$XPathJhove2_xpath_exp', stream_stdout) AS node_list;",
 				pigLines.get(2));
 
-		assertEquals("STORE XPathJhove2 INTO '$out';", pigLines.get(3));
+		assertEquals(
+				"Flatten_List = FOREACH XPathJhove2 GENERATE FLATTEN(node_list) as node_list_flatten;",
+				pigLines.get(3));
+
+		assertEquals("STORE Flatten_List INTO '$out';", pigLines.get(4));
 
 		// PigScriptExporter.export(pigScript, tmpDir.getRoot());
 

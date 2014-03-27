@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.digester.plugins.Declaration;
 import org.apache.tools.ant.util.FileUtils;
 import org.stringtemplate.v4.ST;
 import org.w3c.dom.Document;
@@ -33,10 +34,17 @@ import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import edu.tuberlin.dima.taverna_to_pig.exception.UnsupportedWorkflowException;
+import edu.tuberlin.dima.taverna_to_pig.model.DECLAREStatement;
+import edu.tuberlin.dima.taverna_to_pig.model.FOREACHStatement;
+import edu.tuberlin.dima.taverna_to_pig.model.LOADStatement;
+import edu.tuberlin.dima.taverna_to_pig.model.PigStatement;
+import edu.tuberlin.dima.taverna_to_pig.model.STREAMStatement;
+import edu.tuberlin.dima.taverna_to_pig.model.UDFXPathStatement;
 import edu.tuberlin.dima.taverna_to_pig.utils.TavernaToPigConverterUtil;
 
 /**
@@ -46,11 +54,7 @@ import edu.tuberlin.dima.taverna_to_pig.utils.TavernaToPigConverterUtil;
  */
 public class TavernaToPigConverter {
 
-	private final String LOAD = "<name> = LOAD '$<data>' USING <function>() AS <schema>;";
-	private final String PARAM = "%DECLARE <name> '$<vname>';";
-	private final String STREAM = "<outputRelationName> = STREAM <inputRelationName> THROUGH <streamName> AS (stream_stdout: chararray);";
 	private final String STORE = "STORE <name> INTO '$<path>';";
-	private final String XPATH = "<outputRelationName> = FOREACH <inputRelationName> GENERATE XPathService('$<exp_name>', stream_stdout) AS node_list;";
 	private final String XPATH_EXP = "%DECLARE <exp_name> '<exp>';";
 	private final String DEFINE = "DEFINE <name1> `$<name2>`;";
 
@@ -62,6 +66,9 @@ public class TavernaToPigConverter {
 			.create("http://ns.taverna.org.uk/2010/activity/tool");
 	private static URI XPATH_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/xpath");
+	private static URI BEANSHELL_URI = URI
+			.create("http://ns.taverna.org.uk/2010/activity/beanshell");
+	private static String FLATTEN_LIST_URI = "http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.FlattenList";
 
 	private File file;
 
@@ -115,36 +122,49 @@ public class TavernaToPigConverter {
 
 		Scufl2Tools scufl2Tools = new Scufl2Tools();
 
+		HashMap<Processor, PigStatement> processorMap = new HashMap<Processor, PigStatement>();
+		HashMap<InputWorkflowPort, PigStatement> inputWorkflowMap = new HashMap<InputWorkflowPort, PigStatement>();
+
+		/* handling InputWorkflowPorts */
+
 		for (InputWorkflowPort inputWorkflowPort : inputPorts) {
-			String name = inputWorkflowPort.getName();
 			Integer depth = inputWorkflowPort.getDepth();
 
 			if (depth >= 1) {
-				ST st = new ST(LOAD);
-				st.add("name", name);
-				st.add("data", name);
-				st.add("function", "PigStorage");
-				st.add("schema",
-						TavernaToPigConverterUtil.createSchemaForDepth(depth));
-				String pigLine = st.render();
-				pigLines.add(pigLine);
+				LOADStatement loadStatement = new LOADStatement(
+						inputWorkflowPort);
+
+				pigLines.add(loadStatement.render());
+				pigParameters.add(loadStatement.getDirectoryParameterName());
+
+				inputWorkflowMap.put(inputWorkflowPort, loadStatement);
+
 			} else {
-				ST st = new ST(PARAM);
-				st.add("name", name);
-				st.add("vname", name);
-				String pigLine = st.render();
-				pigLines.add(pigLine);
+				DECLAREStatement declareStatement = new DECLAREStatement(
+						inputWorkflowPort);
+
+				pigLines.add(declareStatement.render());
+				pigParameters.add(declareStatement.getParameterName());
+
+				inputWorkflowMap.put(inputWorkflowPort, declareStatement);
 			}
 
-			pigParameters.add(name);
 		}
 
-		for (Processor processor : TavernaToPigConverterUtil
-				.reverseProcessors(workflow.getProcessors())) {
+		/* handling Processors */
+
+		List<Processor> reverseProcessors = TavernaToPigConverterUtil
+				.reverseProcessors(workflow.getProcessors());
+
+		int index = 0;
+
+		for (Processor processor : reverseProcessors) {
 
 			String outputRelationName = processor.getName();
 
 			String inputRelationName = "";
+
+			String inputFieldName = "";
 
 			List<DataLink> datalinksTo = scufl2Tools.datalinksTo(processor
 					.getInputPorts().first());
@@ -153,12 +173,38 @@ public class TavernaToPigConverter {
 				OutputProcessorPort o = (OutputProcessorPort) datalinksTo
 						.get(0).getReceivesFrom();
 				inputRelationName = o.getParent().getName();
+
+				if (processorMap.containsKey(o.getParent())) {
+					PigStatement pigStatement = processorMap.get(o.getParent());
+
+					if (pigStatement instanceof STREAMStatement) {
+						STREAMStatement streamStatement = (STREAMStatement) pigStatement;
+						inputFieldName = streamStatement.getFieldName();
+					} else if (pigStatement instanceof UDFXPathStatement) {
+						UDFXPathStatement udfStatement = (UDFXPathStatement) pigStatement;
+						inputFieldName = udfStatement.getFieldName();
+					}
+
+				}
+
 			}
 
 			if (datalinksTo.get(0).getReceivesFrom() instanceof InputWorkflowPort) {
 				InputWorkflowPort i = (InputWorkflowPort) datalinksTo.get(0)
 						.getReceivesFrom();
 				inputRelationName = i.getName();
+
+				if (inputWorkflowMap.containsKey(i)) {
+
+					PigStatement pigStatement = inputWorkflowMap.get(i);
+
+					if (pigStatement instanceof LOADStatement) {
+						LOADStatement loadStatement = (LOADStatement) pigStatement;
+						inputFieldName = loadStatement.getFieldName();
+					}
+
+				}
+
 			}
 
 			Configuration configuration = scufl2Tools
@@ -167,25 +213,23 @@ public class TavernaToPigConverter {
 
 			URI type = configuration.getConfigures().getType();
 
+			System.out.println(type);
+
 			// tool
 			if (type.equals(TOOL_URI)) {
 
-				String streamName = processor.getName() + "_stream";
+				STREAMStatement streamStatement = new STREAMStatement(
+						processor, inputRelationName, outputRelationName);
 
-				ST st = new ST(STREAM);
-				st.add("inputRelationName", inputRelationName);
-				st.add("outputRelationName", outputRelationName);
-				st.add("streamName", streamName);
-
-				pigLines.add(st.render());
+				pigLines.add(streamStatement.render());
 
 				ST stDef = new ST(DEFINE);
-				stDef.add("name1", streamName);
-				stDef.add("name2", streamName);
+				stDef.add("name1", streamStatement.getStreamName());
+				stDef.add("name2", streamStatement.getStreamName());
 
 				pigHeaderLines.add(stDef.render());
 
-				pigParameters.add(streamName);
+				pigParameters.add(streamStatement.getStreamName());
 
 				String command = xPath.compile(TOOL_COMMAND_EXPRESSION)
 						.evaluate(xmlDocument);
@@ -195,34 +239,71 @@ public class TavernaToPigConverter {
 				ST stPythonStream = new ST(PYTHON_STREAM);
 				stPythonStream.add("command", command);
 
-				pythonStreams.put(streamName, stPythonStream.render());
+				pythonStreams.put(streamStatement.getStreamName(),
+						stPythonStream.render());
+
+				processorMap.put(processor, streamStatement);
 
 			} else if (type.equals(XPATH_URI)) {
 
-				String xpathExpName = processor.getName() + "_xpath_exp";
+				System.out.println(inputRelationName);
+				System.out.println(outputRelationName);
+				System.out.println(inputFieldName);
+
 				String xpathExp = TavernaToPigConverterUtil
 						.cleanXPathExpression(configuration.getJson()
 								.get("xpathExpression").textValue());
 
-				ST st = new ST(XPATH);
-				st.add("inputRelationName", inputRelationName);
-				st.add("outputRelationName", outputRelationName);
-				st.add("exp_name", xpathExpName);
+				UDFXPathStatement udfStatement = new UDFXPathStatement(
+						processor, inputRelationName, outputRelationName,
+						inputFieldName);
 
-				pigLines.add(st.render());
+				pigLines.add(udfStatement.render());
 
 				ST stExp = new ST(XPATH_EXP);
-				stExp.add("exp_name", xpathExpName);
+				stExp.add("exp_name", udfStatement.getXpathExpParemeterName());
 				stExp.add("exp", xpathExp);
 
 				pigHeaderLines.add(stExp.render());
+
+				processorMap.put(processor, udfStatement);
+
+			} else if (type.equals(BEANSHELL_URI)) {
+
+				JsonNode derivedFrom = configuration.getJson().get(
+						"derivedFrom");
+
+				if (derivedFrom.asText().equals(FLATTEN_LIST_URI)) {
+					
+					String fieldName = inputFieldName + "_flatten";
+					
+					FOREACHStatement foreachStatement = new FOREACHStatement(
+							processor, inputRelationName, outputRelationName,
+							inputFieldName, fieldName, "FLATTEN");
+					
+					pigLines.add(foreachStatement.render());
+					
+					processorMap.put(processor, foreachStatement);
+
+				} else {
+					throw new UnsupportedWorkflowException(
+							"Unsupported Processor Type: " + derivedFrom);
+				}
+
+				System.out.println(inputRelationName);
+				System.out.println(outputRelationName);
+				System.out.println(inputFieldName);
 
 			} else {
 				throw new UnsupportedWorkflowException(
 						"Unsupported Processor Type: " + type);
 			}
 
+			index++;
+
 		}
+
+		/* handling OutputWorkflowPorts */
 
 		for (OutputWorkflowPort outputWorkflowPort : workflow.getOutputPorts()) {
 
@@ -249,5 +330,4 @@ public class TavernaToPigConverter {
 		return new PigScript(workflowName, pigHeaderLines, pigLines,
 				pigParameters, pythonStreams);
 	}
-
 }

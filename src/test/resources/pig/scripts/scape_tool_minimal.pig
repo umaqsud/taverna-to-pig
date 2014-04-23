@@ -23,4 +23,4 @@ fits_validation = STREAM image_pathes THROUGH fits_stream AS (image_path:chararr
 --fits_validation = STREAM image_pathes THROUGH jhove_stream AS (image_path:chararray, xml_text:chararray);
 
 /* STEP 2 with ToMaR */
-fits_validation_tomar = FOREACH image_pathes GENERATE image_path as image_path, ToMarService(image_path, 'Control line') as xml_text;
+fits_validation_tomar = FOREACH image_pathes GENERATE image_path as image_path, ToMarService('fits stdxml --input="hdfs:///user/rainer/bild.jpg"');

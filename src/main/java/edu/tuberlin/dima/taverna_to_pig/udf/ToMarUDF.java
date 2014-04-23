@@ -20,7 +20,7 @@ public class ToMarUDF extends EvalFunc<Tuple> {
 	
 	@Override
 	public Tuple exec(Tuple input) throws IOException {
-		return tupleFactory.newTuple("example xml.");
+		return tupleFactory.newTuple(input.get(0));
 	}
 
 }
